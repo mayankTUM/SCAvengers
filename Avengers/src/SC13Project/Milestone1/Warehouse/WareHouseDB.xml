@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><warehouse xmlns="http://www.example.org/warehouse" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/warehouse WarehouseDB.xsd ">
+  <items>
+    <item>
+      <resourceID>item1</resourceID>
+      <amount>15</amount>
+    </item>
+    <item>
+      <resourceID>item2</resourceID>
+      <amount>3</amount>
+    </item>
+    <item>
+      <resourceID>item3</resourceID>
+      <amount>30</amount>
+    </item>
+    <item>
+      <resourceID>item4</resourceID>
+      <amount>5</amount>
+    </item>
+  </items>
+  <holdingRequests>
+    
+  </holdingRequests>
+</warehouse>

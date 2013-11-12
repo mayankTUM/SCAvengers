@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><bank xmlns="http://www.example.org/bankDB" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/bankDB bankDB.xsd ">
+  <account>
+    <accountID>ACC1234</accountID>
+    <amount>5000</amount>
+  </account>
+  <account>
+    <accountID>ACC5678</accountID>
+    <amount>15000</amount>
+  </account>
+</bank>
