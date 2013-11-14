@@ -32,13 +32,13 @@ public class PaymentImpl implements PaymentWS {
 	Transformer transformer = null;
 	DOMSource source = null;
 	StreamResult result = null ;
-	String xml = "/home/mayank/ServiceComputing/Avengers/src/SC13Project/Milestone1/Payment/bankDB.xml";
-	
+	String xml = System.getProperty("user.dir") + "/../datasource/ds_51_3.xml";
+
 	@Override
 	public int queryAccount(String accountID) {
 		// TODO Auto-generated method stub
 		createDOM();
-		NodeList nl = doc.getElementsByTagName("accountID");
+		NodeList nl = doc.getElementsByTagNameNS("*","accountID");
 		int len = nl.getLength();
 		int iter = 0;
 		while(iter!=len)
@@ -49,13 +49,13 @@ public class PaymentImpl implements PaymentWS {
 				if (t1.getNodeType() == Node.ELEMENT_NODE)
 				{
 					Element eElement = (Element) t1;
-					Node amount = eElement.getElementsByTagName("amount").item(0);
+					Node amount = eElement.getElementsByTagNameNS("*","amount").item(0);
 					return Integer.parseInt(amount.getTextContent());
 				}
 			}
 			iter++;
 		}
-		return -1;
+		return 0;
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class PaymentImpl implements PaymentWS {
 			return false;
 		}
 		createDOM();
-		NodeList nl = doc.getElementsByTagName("accountID");
+		NodeList nl = doc.getElementsByTagNameNS("*","accountID");
 		int len = nl.getLength();
 		int iter = 0;
 		Node payee = null;
@@ -89,8 +89,8 @@ public class PaymentImpl implements PaymentWS {
 			Element payeeElement = (Element) payee;
 			Element benefiterElement = (Element) benefiter;
 			
-			int payeeamt = Integer.parseInt(payeeElement.getElementsByTagName("amount").item(0).getTextContent());
-			int benefiteramt = Integer.parseInt(benefiterElement.getElementsByTagName("amount").item(0).getTextContent());
+			int payeeamt = Integer.parseInt(payeeElement.getElementsByTagNameNS("*","amount").item(0).getTextContent());
+			int benefiteramt = Integer.parseInt(benefiterElement.getElementsByTagNameNS("*","amount").item(0).getTextContent());
 			if (payeeamt < amount)
 			{
 				System.out.println("Insufficient funds in payee account");
@@ -102,8 +102,8 @@ public class PaymentImpl implements PaymentWS {
 				System.out.println("Payee balance is "+ payeebalance);
 				int benefiterbalance = benefiteramt + amount;
 				System.out.println("Benefiter balance is "+ benefiterbalance);
-				payeeElement.getElementsByTagName("amount").item(0).setTextContent("" + payeebalance);
-				benefiterElement.getElementsByTagName("amount").item(0).setTextContent("" + benefiterbalance);
+				payeeElement.getElementsByTagNameNS("*","amount").item(0).setTextContent("" + payeebalance);
+				benefiterElement.getElementsByTagNameNS("*","amount").item(0).setTextContent("" + benefiterbalance);
 				updateDOM();
 				return true;
 			}
@@ -115,6 +115,7 @@ public class PaymentImpl implements PaymentWS {
 	{
 		// Make an  instance of the DocumentBuilderFactory
 		dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
 		try {
 			db =  dbf.newDocumentBuilder();
 			dom = db.parse(xml);

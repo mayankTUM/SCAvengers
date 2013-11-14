@@ -3,6 +3,9 @@ package SC13Project.Milestone1.Warehouse;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+
+import javax.jws.WebMethod;
+import javax.jws.WebService;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,17 +33,17 @@ public class WarehouseImpl implements WarehouseWS {
 	Transformer transformer = null;
 	DOMSource source = null;
 	StreamResult result = null ;
-	String xml = "/home/mayank/ServiceComputing/Avengers/src/SC13Project/Milestone1/Warehouse/WareHouseDB.xml";
+	String xml = System.getProperty("user.dir")+"/../datasource/ds_51_2.xml";
 	
 	@Override
 	public int query(String resourceID) {
 		createDOM();
-		NodeList items = doc.getElementsByTagName("items");
+		NodeList items = doc.getElementsByTagNameNS("*","items");
 		Node itemsNode = items.item(0); 
 		if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 		{
 			Element eElement = (Element) itemsNode;
-			NodeList itemList = eElement.getElementsByTagName("item");
+			NodeList itemList = eElement.getElementsByTagNameNS("*","item");
 			int len = itemList.getLength();
 			int iter = 0;
 			while(iter!=len)
@@ -49,14 +52,16 @@ public class WarehouseImpl implements WarehouseWS {
 				if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 				{
 					Element oElement = (Element) item;
-					if(oElement.getElementsByTagName("resourceID").item(0).getTextContent().equals(resourceID))
+					if(oElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent().equals(resourceID))
 					{
-						return Integer.parseInt(oElement.getElementsByTagName("amount").item(0).getTextContent());
+						return Integer.parseInt(oElement.getElementsByTagNameNS("*","amount").item(0).getTextContent());
 					}
 				}
 				iter++;
 			}
 		}
+		// -1 indicates the resource does not exist
+		System.out.println("Resource ID does not exist");
 		return 0;
 	}
 
@@ -64,12 +69,12 @@ public class WarehouseImpl implements WarehouseWS {
 	public boolean pickupItems(String resourceID, int amount)
 			throws NotEnoughItemException {
 		createDOM();
-		NodeList items = doc.getElementsByTagName("items");
+		NodeList items = doc.getElementsByTagNameNS("*","items");
 		Node itemsNode = items.item(0); 
 		if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 		{
 			Element eElement = (Element) itemsNode;
-			NodeList itemList = eElement.getElementsByTagName("item");
+			NodeList itemList = eElement.getElementsByTagNameNS("*","item");
 			int len = itemList.getLength();
 			int iter = 0;
 			while(iter!=len)
@@ -78,9 +83,9 @@ public class WarehouseImpl implements WarehouseWS {
 				if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 				{
 					Element oElement = (Element) item;
-					if(oElement.getElementsByTagName("resourceID").item(0).getTextContent().equals(resourceID))
+					if(oElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent().equals(resourceID))
 					{
-						int amountAvailable = Integer.parseInt(oElement.getElementsByTagName("amount").item(0).getTextContent());
+						int amountAvailable = Integer.parseInt(oElement.getElementsByTagNameNS("*","amount").item(0).getTextContent());
 						if (amountAvailable < amount)
 						{
 							throw new NotEnoughItemException();
@@ -88,7 +93,7 @@ public class WarehouseImpl implements WarehouseWS {
 						else
 						{
 							int bal = amountAvailable - amount;
-							oElement.getElementsByTagName("amount").item(0).setTextContent("" + bal);
+							oElement.getElementsByTagNameNS("*","amount").item(0).setTextContent("" + bal);
 							updateDOM();
 							return true;
 						}
@@ -103,12 +108,12 @@ public class WarehouseImpl implements WarehouseWS {
 	@Override
 	public int complementStock(String resourceID, int amount) {
 		createDOM();
-		NodeList items = doc.getElementsByTagName("items");
+		NodeList items = doc.getElementsByTagNameNS("*","items");
 		Node itemsNode = items.item(0); 
 		if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 		{
 			Element eElement = (Element) itemsNode;
-			NodeList itemList = eElement.getElementsByTagName("item");
+			NodeList itemList = eElement.getElementsByTagNameNS("*","item");
 			int len = itemList.getLength();
 			int iter = 0;
 			while(iter!=len)
@@ -117,11 +122,11 @@ public class WarehouseImpl implements WarehouseWS {
 				if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 				{
 					Element oElement = (Element) item;
-					if(oElement.getElementsByTagName("resourceID").item(0).getTextContent().equals(resourceID))
+					if(oElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent().equals(resourceID))
 					{
-						int amountAvailable = Integer.parseInt(oElement.getElementsByTagName("amount").item(0).getTextContent());
+						int amountAvailable = Integer.parseInt(oElement.getElementsByTagNameNS("*","amount").item(0).getTextContent());
 						int newAmountAvailable = amountAvailable + amount;
-						oElement.getElementsByTagName("amount").item(0).setTextContent("" + newAmountAvailable);
+						oElement.getElementsByTagNameNS("*","amount").item(0).setTextContent("" + newAmountAvailable);
 						updateDOM();
 						return newAmountAvailable;
 					}
@@ -129,6 +134,8 @@ public class WarehouseImpl implements WarehouseWS {
 				iter++;
 			}
 		}
+		// indicates that the resource does not exist
+		System.out.println("Resource ID does not exist");
 		return 0;
 	}
 
@@ -136,13 +143,13 @@ public class WarehouseImpl implements WarehouseWS {
 	public String holdItems(String resourceID, int amount)
 			throws NotEnoughItemException {
 		createDOM();
-		NodeList items = doc.getElementsByTagName("items");
+		NodeList items = doc.getElementsByTagNameNS("*","items");
 		Node itemsNode = items.item(0);
 		boolean flag = false;
 		if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 		{
 			Element eElement = (Element) itemsNode;
-			NodeList itemList = eElement.getElementsByTagName("item");
+			NodeList itemList = eElement.getElementsByTagNameNS("*","item");
 			int len = itemList.getLength();
 			int iter = 0;
 			Element foundElement = null;
@@ -152,10 +159,11 @@ public class WarehouseImpl implements WarehouseWS {
 				if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 				{
 					Element oElement = (Element) item;
-					if(oElement.getElementsByTagName("resourceID").item(0).getTextContent().equals(resourceID))
+					if(oElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent().equals(resourceID))
 					{	
 						foundElement = oElement;
 						flag = true;
+						break;
 					}
 				}
 				iter++;
@@ -166,14 +174,14 @@ public class WarehouseImpl implements WarehouseWS {
 			}
 			else
 			{
-				int itemsAvailable = Integer.parseInt(foundElement.getElementsByTagName("amount").item(0).getTextContent());
+				int itemsAvailable = Integer.parseInt(foundElement.getElementsByTagNameNS("*","amount").item(0).getTextContent());
 				if (itemsAvailable < amount)
 				{
 					throw new NotEnoughItemException();
 				}
 				else
 				{
-					Node holdingRequest = doc.getElementsByTagName("holdingRequests").item(0);
+					Node holdingRequest = doc.getElementsByTagNameNS("*","holdingRequests").item(0);
 					String reqID = UUID.randomUUID().toString();
 					if(holdingRequest.getNodeType() == Node.ELEMENT_NODE)
 					{
@@ -198,7 +206,7 @@ public class WarehouseImpl implements WarehouseWS {
 						amt.setTextContent("" + amount);
 						
 						int balance = itemsAvailable - amount;
-						foundElement.getElementsByTagName("amount").item(0).setTextContent("" + balance);
+						foundElement.getElementsByTagNameNS("*","amount").item(0).setTextContent("" + balance);
 						updateDOM();
 						return reqID;
 					}
@@ -211,7 +219,7 @@ public class WarehouseImpl implements WarehouseWS {
 	@Override
 	public void cancelHoldingItems(String holdingID) {
 		createDOM();
-		NodeList reqID = doc.getElementsByTagName("requestID");
+		NodeList reqID = doc.getElementsByTagNameNS("*","requestID");
     	int len = reqID.getLength();
 		int iter = 0;
 		boolean flag = false;
@@ -231,17 +239,17 @@ public class WarehouseImpl implements WarehouseWS {
 		if(flag)
 		{
 			Element eElement = (Element) parent;
-			String resourceID = eElement.getElementsByTagName("resourceID").item(0).getTextContent();
-			int amountToGoBack = Integer.parseInt(eElement.getElementsByTagName("amount").item(0).getTextContent());
+			String resourceID = eElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent();
+			int amountToGoBack = Integer.parseInt(eElement.getElementsByTagNameNS("*","amount").item(0).getTextContent());
 			
-			NodeList items = doc.getElementsByTagName("items");
+			NodeList items = doc.getElementsByTagNameNS("*","items");
 			Node itemsNode = items.item(0);
 			int currentAmount = 0;
 			Node amountToBeAdded = null;
 			if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 			{
 				Element oElement = (Element) itemsNode;
-				NodeList itemList = oElement.getElementsByTagName("item");
+				NodeList itemList = oElement.getElementsByTagNameNS("*","item");
 				int length = itemList.getLength();
 				int iteration = 0;
 				while(iteration!=length)
@@ -250,9 +258,9 @@ public class WarehouseImpl implements WarehouseWS {
 					if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 					{
 						Element aElement = (Element) item;
-						if(aElement.getElementsByTagName("resourceID").item(0).getTextContent().equals(resourceID))
+						if(aElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent().equals(resourceID))
 						{
-						    amountToBeAdded = aElement.getElementsByTagName("amount").item(0);
+						    amountToBeAdded = aElement.getElementsByTagNameNS("*","amount").item(0);
 							currentAmount =  Integer.parseInt(amountToBeAdded.getTextContent());
 							break;
 						}
@@ -276,7 +284,7 @@ public class WarehouseImpl implements WarehouseWS {
 			throws InvalidHoldingIDException {
 		
 		createDOM();
-		NodeList reqID = doc.getElementsByTagName("requestID");
+		NodeList reqID = doc.getElementsByTagNameNS("*","requestID");
     	int len = reqID.getLength();
 		int iter = 0;
 		boolean flag = false;
@@ -309,6 +317,7 @@ public class WarehouseImpl implements WarehouseWS {
 	{
 		// Make an  instance of the DocumentBuilderFactory
 				dbf = DocumentBuilderFactory.newInstance();
+				dbf.setNamespaceAware(true);
 				try {
 					db =  dbf.newDocumentBuilder();
 					dom = db.parse(xml);

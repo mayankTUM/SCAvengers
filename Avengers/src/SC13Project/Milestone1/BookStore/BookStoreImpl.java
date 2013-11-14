@@ -22,13 +22,29 @@ public class BookStoreImpl implements BookCategoryWS {
 	DocumentBuilderFactory dbf = null;
 	DocumentBuilder db = null;
 	Element doc = null;
+	String xml = System.getProperty("user.dir") + "/../datasource/ds_51_1.xml";
+
 	@Override
 	public List<String> getAllBooKNames() {
 		createDOM();
 		List<String> bookNames = new ArrayList<String>();
-		NodeList nl = doc.getElementsByTagName("title");
-		int len = nl.getLength();
-		System.out.println("Length is "+ len);
+		int len = 0;
+		NodeList nl = null;
+		try
+		{
+			nl = doc.getElementsByTagNameNS("*","title");
+			len = nl.getLength();
+		}
+		catch(NullPointerException npe)
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		int iter = 0;
 		while(iter!=len)
 		{
@@ -42,8 +58,22 @@ public class BookStoreImpl implements BookCategoryWS {
 	public List<String> getAllBookISBN10() {
 		createDOM();
 		List<String> bookISBN10 = new ArrayList<String>();
-		NodeList nl = doc.getElementsByTagName("ISBN10");
-		int len = nl.getLength();
+		int len = 0;
+		NodeList nl = null;
+		try
+		{
+			nl = doc.getElementsByTagNameNS("*","ISBN10");
+			len = nl.getLength();
+		}
+		catch(NullPointerException npe)
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		int iter = 0;
 		while(iter!=len)
 		{
@@ -57,8 +87,22 @@ public class BookStoreImpl implements BookCategoryWS {
 	public List<String> getAllBookISBN13() {
 		createDOM();
 		List<String> bookISBN13 = new ArrayList<String>();
-		NodeList nl = doc.getElementsByTagName("ISBN13");
-		int len = nl.getLength();
+		int len = 0;
+		NodeList nl = null;
+		try
+		{
+			nl = doc.getElementsByTagNameNS("*","ISBN13");
+			len = nl.getLength();
+		}
+		catch(NullPointerException npe)
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		int iter = 0;
 		while(iter!=len)
 		{
@@ -72,8 +116,23 @@ public class BookStoreImpl implements BookCategoryWS {
 	public List<BookInfo> getBooksByTitle(String title) {
 		List<BookInfo> list = new ArrayList<BookInfo>();
 		createDOM();
-		NodeList nl = doc.getElementsByTagName("book");
-		int len = nl.getLength();
+		int len = 0;
+		boolean flag = false;
+		NodeList nl = null;
+		try
+		{
+			nl = doc.getElementsByTagNameNS("*","book");
+			len = nl.getLength();
+		}
+		catch(NullPointerException npe)
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		int iter = 0;
 		while(iter!=len)
 		{
@@ -81,57 +140,18 @@ public class BookStoreImpl implements BookCategoryWS {
 			if (t1.getNodeType() == Node.ELEMENT_NODE)
 			{
 				Element eElement = (Element) t1;
-				if(eElement.getElementsByTagName("title").item(0).getTextContent().equals(title)) 
-					{
-						BookInfo bookInfo = new BookInfo();
-						bookInfo.setTitle(eElement.getElementsByTagName("title").item(0).getTextContent());
-						bookInfo.setResourceID(eElement.getElementsByTagName("resourceID").item(0).getTextContent());
-						bookInfo.setISBN13(eElement.getElementsByTagName("ISBN13").item(0).getTextContent());
-						bookInfo.setISBN13(eElement.getElementsByTagName("ISBN13").item(0).getTextContent());
-						ArrayList<String> authorlist = new ArrayList<String>();
-						Node authors = eElement.getElementsByTagName("authors").item(0);
-						Element aElement = (Element) authors;
-						NodeList authorNames = aElement.getElementsByTagName("author");
-						int size = authorNames.getLength();
-						int count = 0;
-						while(size!=count)
-						{
-							authorlist.add(authorNames.item(count).getTextContent());
-							count++;
-						}
-						AuthorsInfo authorsInfo = new AuthorsInfo();
-						authorsInfo.setAuthorlist(authorlist);
-						bookInfo.setAuthors(authorsInfo);
-						bookInfo.setPageNum(Integer.parseInt(eElement.getElementsByTagName("pageNum").item(0).getTextContent()));
-						bookInfo.setPublisher(eElement.getElementsByTagName("publisher").item(0).getTextContent());
-						bookInfo.setPublishdate(eElement.getElementsByTagName("publishdate").item(0).getTextContent());
-						bookInfo.setVersion(eElement.getElementsByTagName("version").item(0).getTextContent());
-						bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagName("price").item(0).getTextContent()));
-						list.add(bookInfo);
-					}
-			}
-			iter++;
-		}
-		return list;
-	}
-
-		@Override
-		public List<BookInfo> getBooksByAuthor(String author) {
-			List<BookInfo> list = new ArrayList<BookInfo>();
-			createDOM();
-			NodeList nl = doc.getElementsByTagName("book");
-			int len = nl.getLength();
-			int iter = 0;
-			while(iter!=len)
-			{
-				Node t1 = nl.item(iter);
-				if (t1.getNodeType() == Node.ELEMENT_NODE)
+				if(eElement.getElementsByTagNameNS("*","title").item(0).getTextContent().equals(title)) 
 				{
-					Element eElement = (Element) t1;
-					Node authors = eElement.getElementsByTagName("authors").item(0);
-					Element aElement = (Element) authors;
+					flag=true;
+					BookInfo bookInfo = new BookInfo();
+					bookInfo.setTitle(eElement.getElementsByTagNameNS("*","title").item(0).getTextContent());
+					bookInfo.setResourceID(eElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent());
+					bookInfo.setISBN10(eElement.getElementsByTagNameNS("*","ISBN10").item(0).getTextContent());
+					bookInfo.setISBN13(eElement.getElementsByTagNameNS("*","ISBN13").item(0).getTextContent());
 					ArrayList<String> authorlist = new ArrayList<String>();
-					NodeList authorNames = aElement.getElementsByTagName("author");
+					Node authors = eElement.getElementsByTagNameNS("*","authors").item(0);
+					Element aElement = (Element) authors;
+					NodeList authorNames = aElement.getElementsByTagNameNS("*","author");
 					int size = authorNames.getLength();
 					int count = 0;
 					while(size!=count)
@@ -139,145 +159,264 @@ public class BookStoreImpl implements BookCategoryWS {
 						authorlist.add(authorNames.item(count).getTextContent());
 						count++;
 					}
-					if(authorlist.contains(author))
-					{
-						AuthorsInfo authorsInfo = new AuthorsInfo();
-						BookInfo bookInfo = new BookInfo();
-						bookInfo.setTitle(eElement.getElementsByTagName("title").item(0).getTextContent());
-						bookInfo.setResourceID(eElement.getElementsByTagName("resourceID").item(0).getTextContent());
-						bookInfo.setISBN13(eElement.getElementsByTagName("ISBN13").item(0).getTextContent());
-						bookInfo.setISBN13(eElement.getElementsByTagName("ISBN13").item(0).getTextContent());
-						authorsInfo.setAuthorlist(authorlist);
-						bookInfo.setAuthors(authorsInfo);
-						bookInfo.setPageNum(Integer.parseInt(eElement.getElementsByTagName("pageNum").item(0).getTextContent()));
-						bookInfo.setPublisher(eElement.getElementsByTagName("publisher").item(0).getTextContent());
-						bookInfo.setPublishdate(eElement.getElementsByTagName("publishdate").item(0).getTextContent());
-						bookInfo.setVersion(eElement.getElementsByTagName("version").item(0).getTextContent());
-						bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagName("price").item(0).getTextContent()));
-						list.add(bookInfo);
-					}
-				}	
-				iter++;	
+					AuthorsInfo authorsInfo = new AuthorsInfo();
+					authorsInfo.setAuthorlist(authorlist);
+					bookInfo.setAuthors(authorsInfo);
+					bookInfo.setPageNum(Integer.parseInt(eElement.getElementsByTagNameNS("*","pageNum").item(0).getTextContent()));
+					bookInfo.setPublisher(eElement.getElementsByTagNameNS("*","publisher").item(0).getTextContent());
+					bookInfo.setPublishdate(eElement.getElementsByTagNameNS("*","publishdate").item(0).getTextContent());
+					bookInfo.setVersion(eElement.getElementsByTagNameNS("*","version").item(0).getTextContent());
+					bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
+					list.add(bookInfo);
+				}
 			}
-			return list;
+			iter++;
 		}
-
-		@Override
-		public BookInfo getBookInfobyISBN10(String isbn10) {
-			createDOM();
-			NodeList nl = doc.getElementsByTagName("ISBN10");
-			BookInfo bookInfo = new BookInfo();
-			int len = nl.getLength();
-			int iter = 0;
-			boolean flag=false;
-			Node parent = null;
-			while(iter!=len)
-			{
-				Node isbn10id = nl.item(iter); 
-				if(isbn10id.getTextContent().equals(isbn10))
-				{
-					parent = isbn10id.getParentNode();
-					flag = true;
-				}
-				iter++;
-			}
-			if(flag)
-			{
-				Element eElement = (Element) parent;
-				bookInfo.setTitle(eElement.getElementsByTagName("title").item(0).getTextContent());
-				bookInfo.setResourceID(eElement.getElementsByTagName("resourceID").item(0).getTextContent());
-				bookInfo.setISBN13(eElement.getElementsByTagName("ISBN13").item(0).getTextContent());
-				bookInfo.setISBN13(eElement.getElementsByTagName("ISBN13").item(0).getTextContent());
-				ArrayList<String> authorlist = new ArrayList<String>();
-				Node authors = eElement.getElementsByTagName("authors").item(0);
-				Element aElement = (Element) authors;
-				NodeList authorNames = aElement.getElementsByTagName("author");
-				int size = authorNames.getLength();
-				int count = 0;
-				while(size!=count)
-				{
-					authorlist.add(authorNames.item(count).getTextContent());
-					count++;
-				}
-				AuthorsInfo authorsInfo = new AuthorsInfo();
-				authorsInfo.setAuthorlist(authorlist);
-				bookInfo.setAuthors(authorsInfo);
-				bookInfo.setPageNum(Integer.parseInt(eElement.getElementsByTagName("pageNum").item(0).getTextContent()));
-				bookInfo.setPublisher(eElement.getElementsByTagName("publisher").item(0).getTextContent());
-				bookInfo.setPublishdate(eElement.getElementsByTagName("publishdate").item(0).getTextContent());
-				bookInfo.setVersion(eElement.getElementsByTagName("version").item(0).getTextContent());
-				bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagName("price").item(0).getTextContent()));
-			}
-			return bookInfo;
-		}
-
-		@Override
-		public BookInfo getBookInfobyISBN13(String isbn13) {
-			createDOM();
-			NodeList nl = doc.getElementsByTagName("ISBN13");
-			BookInfo bookInfo = new BookInfo();
-			int len = nl.getLength();
-			int iter = 0;
-			boolean flag=false;
-			Node parent = null;
-			while(iter!=len)
-			{
-				Node isbn13id = nl.item(iter); 
-				if(isbn13id.getTextContent().equals(isbn13))
-				{
-					parent = isbn13id.getParentNode();
-					flag = true;
-				}
-				iter++;
-			}
-			if(flag)
-			{
-				Element eElement = (Element) parent;
-				bookInfo.setTitle(eElement.getElementsByTagName("title").item(0).getTextContent());
-				bookInfo.setResourceID(eElement.getElementsByTagName("resourceID").item(0).getTextContent());
-				bookInfo.setISBN13(eElement.getElementsByTagName("ISBN13").item(0).getTextContent());
-				bookInfo.setISBN13(eElement.getElementsByTagName("ISBN13").item(0).getTextContent());
-				ArrayList<String> authorlist = new ArrayList<String>();
-				Node authors = eElement.getElementsByTagName("authors").item(0);
-				Element aElement = (Element) authors;
-				NodeList authorNames = aElement.getElementsByTagName("author");
-				int size = authorNames.getLength();
-				int count = 0;
-				while(size!=count)
-				{
-					authorlist.add(authorNames.item(count).getTextContent());
-					count++;
-				}
-				AuthorsInfo authorsInfo = new AuthorsInfo();
-				authorsInfo.setAuthorlist(authorlist);
-				bookInfo.setAuthors(authorsInfo);
-				bookInfo.setPageNum(Integer.parseInt(eElement.getElementsByTagName("pageNum").item(0).getTextContent()));
-				bookInfo.setPublisher(eElement.getElementsByTagName("publisher").item(0).getTextContent());
-				bookInfo.setPublishdate(eElement.getElementsByTagName("publishdate").item(0).getTextContent());
-				bookInfo.setVersion(eElement.getElementsByTagName("version").item(0).getTextContent());
-				bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagName("price").item(0).getTextContent()));
-
-			}
-			return bookInfo;
-		}
-
-		private void createDOM()
+		if(!flag)
 		{
-			String xml = "/home/mayank/ServiceComputing/Avengers/src/SC13Project/Milestone1/BookStore/bookDB.xml";
-			// Make an  instance of the DocumentBuilderFactory
-			dbf = DocumentBuilderFactory.newInstance();
 			try {
-				db =  dbf.newDocumentBuilder();
-				dom = db.parse(xml);
-				doc = dom.getDocumentElement();
-			} catch (ParserConfigurationException pce) {
-				System.out.println(pce.getMessage());
-			} catch (SAXException se) {
-				System.out.println(se.getMessage());
-			} catch (IOException ioe) {
-				System.err.println(ioe.getMessage());
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}
+		return list;
+	}
 
+	@Override
+	public List<BookInfo> getBooksByAuthor(String author) {
+		List<BookInfo> list = new ArrayList<BookInfo>();
+		createDOM();
+		int len = 0;
+		boolean flag = false;
+		NodeList nl = null;
+		try
+		{
+			nl = doc.getElementsByTagNameNS("*","book");
+			len = nl.getLength();
+		}
+		catch(NullPointerException npe)
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		int iter = 0;
+		while(iter!=len)
+		{
+			Node t1 = nl.item(iter);
+			if (t1.getNodeType() == Node.ELEMENT_NODE)
+			{
+				Element eElement = (Element) t1;
+				Node authors = eElement.getElementsByTagNameNS("*","authors").item(0);
+				Element aElement = (Element) authors;
+				ArrayList<String> authorlist = new ArrayList<String>();
+				NodeList authorNames = aElement.getElementsByTagNameNS("*","author");
+				int size = authorNames.getLength();
+				int count = 0;
+				while(size!=count)
+				{
+					authorlist.add(authorNames.item(count).getTextContent());
+					count++;
+				}
+				if(authorlist.contains(author))
+				{
+					flag = true;
+					AuthorsInfo authorsInfo = new AuthorsInfo();
+					BookInfo bookInfo = new BookInfo();
+					bookInfo.setTitle(eElement.getElementsByTagNameNS("*","title").item(0).getTextContent());
+					bookInfo.setResourceID(eElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent());
+					bookInfo.setISBN10(eElement.getElementsByTagNameNS("*","ISBN10").item(0).getTextContent());
+					bookInfo.setISBN13(eElement.getElementsByTagNameNS("*","ISBN13").item(0).getTextContent());
+					authorsInfo.setAuthorlist(authorlist);
+					bookInfo.setAuthors(authorsInfo);
+					bookInfo.setPageNum(Integer.parseInt(eElement.getElementsByTagNameNS("*","pageNum").item(0).getTextContent()));
+					bookInfo.setPublisher(eElement.getElementsByTagNameNS("*","publisher").item(0).getTextContent());
+					bookInfo.setPublishdate(eElement.getElementsByTagNameNS("*","publishdate").item(0).getTextContent());
+					bookInfo.setVersion(eElement.getElementsByTagNameNS("*","version").item(0).getTextContent());
+					bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
+					list.add(bookInfo);
+				}
+			}	
+			iter++;	
+		}
+		if(!flag)
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		return list;
+	}
+
+	@Override
+	public BookInfo getBookInfobyISBN10(String isbn10) {
+		createDOM();
+		BookInfo bookInfo = new BookInfo();
+		int len = 0;
+		NodeList nl = null;
+		boolean flag = false;
+		try
+		{
+			nl = doc.getElementsByTagNameNS("*","ISBN10");
+			len = nl.getLength();
+		}
+		catch(NullPointerException npe)
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}			int iter = 0;
+		Node parent = null;
+		while(iter!=len)
+		{
+			Node isbn10id = nl.item(iter); 
+			if(isbn10id.getTextContent().equals(isbn10))
+			{
+				parent = isbn10id.getParentNode();
+				flag = true;
+			}
+			iter++;
+		}
+		if(flag)
+		{
+			Element eElement = (Element) parent;
+			bookInfo.setTitle(eElement.getElementsByTagNameNS("*","title").item(0).getTextContent());
+			bookInfo.setResourceID(eElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent());
+			bookInfo.setISBN10(eElement.getElementsByTagNameNS("*","ISBN10").item(0).getTextContent());
+			bookInfo.setISBN13(eElement.getElementsByTagNameNS("*","ISBN13").item(0).getTextContent());
+			ArrayList<String> authorlist = new ArrayList<String>();
+			Node authors = eElement.getElementsByTagNameNS("*","authors").item(0);
+			Element aElement = (Element) authors;
+			NodeList authorNames = aElement.getElementsByTagNameNS("*","author");
+			int size = authorNames.getLength();
+			int count = 0;
+			while(size!=count)
+			{
+				authorlist.add(authorNames.item(count).getTextContent());
+				count++;
+			}
+			AuthorsInfo authorsInfo = new AuthorsInfo();
+			authorsInfo.setAuthorlist(authorlist);
+			bookInfo.setAuthors(authorsInfo);
+			bookInfo.setPageNum(Integer.parseInt(eElement.getElementsByTagNameNS("*","pageNum").item(0).getTextContent()));
+			bookInfo.setPublisher(eElement.getElementsByTagNameNS("*","publisher").item(0).getTextContent());
+			bookInfo.setPublishdate(eElement.getElementsByTagNameNS("*","publishdate").item(0).getTextContent());
+			bookInfo.setVersion(eElement.getElementsByTagNameNS("*","version").item(0).getTextContent());
+			bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
+		}
+		else
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return bookInfo;
+	}
+
+	@Override
+	public BookInfo getBookInfobyISBN13(String isbn13) {
+		createDOM();
+		BookInfo bookInfo = new BookInfo();
+		int len = 0;
+		NodeList nl = null;
+		boolean flag = false;
+		try
+		{
+			nl = doc.getElementsByTagNameNS("*","ISBN13");
+			len = nl.getLength();
+		}
+		catch(NullPointerException npe)
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}			
+		int iter = 0;
+		Node parent = null;
+		while(iter!=len)
+		{
+			Node isbn13id = nl.item(iter); 
+			if(isbn13id.getTextContent().equals(isbn13))
+			{
+				parent = isbn13id.getParentNode();
+				flag = true;
+			}
+			iter++;
+		}
+		if(flag)
+		{
+			Element eElement = (Element) parent;
+			bookInfo.setTitle(eElement.getElementsByTagNameNS("*","title").item(0).getTextContent());
+			bookInfo.setResourceID(eElement.getElementsByTagNameNS("*","resourceID").item(0).getTextContent());
+			bookInfo.setISBN10(eElement.getElementsByTagNameNS("*","ISBN10").item(0).getTextContent());
+			bookInfo.setISBN13(eElement.getElementsByTagNameNS("*","ISBN13").item(0).getTextContent());
+			ArrayList<String> authorlist = new ArrayList<String>();
+			Node authors = eElement.getElementsByTagNameNS("*","authors").item(0);
+			Element aElement = (Element) authors;
+			NodeList authorNames = aElement.getElementsByTagNameNS("*","author");
+			int size = authorNames.getLength();
+			int count = 0;
+			while(size!=count)
+			{
+				authorlist.add(authorNames.item(count).getTextContent());
+				count++;
+			}
+			AuthorsInfo authorsInfo = new AuthorsInfo();
+			authorsInfo.setAuthorlist(authorlist);
+			bookInfo.setAuthors(authorsInfo);
+			bookInfo.setPageNum(Integer.parseInt(eElement.getElementsByTagNameNS("*","pageNum").item(0).getTextContent()));
+			bookInfo.setPublisher(eElement.getElementsByTagNameNS("*","publisher").item(0).getTextContent());
+			bookInfo.setPublishdate(eElement.getElementsByTagNameNS("*","publishdate").item(0).getTextContent());
+			bookInfo.setVersion(eElement.getElementsByTagNameNS("*","version").item(0).getTextContent());
+			bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
+
+		}
+		else
+		{
+			try {
+				throw new UnAvailableException();
+			} catch (UnAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return bookInfo;
+	}
+
+	private void createDOM()
+	{
+		// Make an  instance of the DocumentBuilderFactory
+		dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		try {
+			db =  dbf.newDocumentBuilder();
+			dom = db.parse(xml);
+			doc = dom.getDocumentElement();
+		} catch (ParserConfigurationException pce) {
+			System.out.println(pce.getMessage());
+		} catch (SAXException se) {
+			System.out.println(se.getMessage());
+		} catch (IOException ioe) {
+			System.err.println(ioe.getMessage());
 		}
 
 	}
+
+}
