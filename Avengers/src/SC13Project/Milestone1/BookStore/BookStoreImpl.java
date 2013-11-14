@@ -166,7 +166,7 @@ public class BookStoreImpl implements BookCategoryWS {
 					bookInfo.setPublisher(eElement.getElementsByTagNameNS("*","publisher").item(0).getTextContent());
 					bookInfo.setPublishdate(eElement.getElementsByTagNameNS("*","publishdate").item(0).getTextContent());
 					bookInfo.setVersion(eElement.getElementsByTagNameNS("*","version").item(0).getTextContent());
-					bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
+					bookInfo.setPrice(Double.parseDouble(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
 					list.add(bookInfo);
 				}
 			}
@@ -238,7 +238,7 @@ public class BookStoreImpl implements BookCategoryWS {
 					bookInfo.setPublisher(eElement.getElementsByTagNameNS("*","publisher").item(0).getTextContent());
 					bookInfo.setPublishdate(eElement.getElementsByTagNameNS("*","publishdate").item(0).getTextContent());
 					bookInfo.setVersion(eElement.getElementsByTagNameNS("*","version").item(0).getTextContent());
-					bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
+					bookInfo.setPrice(Double.parseDouble(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
 					list.add(bookInfo);
 				}
 			}	
@@ -313,7 +313,7 @@ public class BookStoreImpl implements BookCategoryWS {
 			bookInfo.setPublisher(eElement.getElementsByTagNameNS("*","publisher").item(0).getTextContent());
 			bookInfo.setPublishdate(eElement.getElementsByTagNameNS("*","publishdate").item(0).getTextContent());
 			bookInfo.setVersion(eElement.getElementsByTagNameNS("*","version").item(0).getTextContent());
-			bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
+			bookInfo.setPrice(Double.parseDouble(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
 		}
 		else
 		{
@@ -385,7 +385,7 @@ public class BookStoreImpl implements BookCategoryWS {
 			bookInfo.setPublisher(eElement.getElementsByTagNameNS("*","publisher").item(0).getTextContent());
 			bookInfo.setPublishdate(eElement.getElementsByTagNameNS("*","publishdate").item(0).getTextContent());
 			bookInfo.setVersion(eElement.getElementsByTagNameNS("*","version").item(0).getTextContent());
-			bookInfo.setPrice(Float.parseFloat(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
+			bookInfo.setPrice(Double.parseDouble(eElement.getElementsByTagNameNS("*","price").item(0).getTextContent()));
 
 		}
 		else

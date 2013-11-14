@@ -33,13 +33,14 @@ public class WarehouseImpl implements WarehouseWS {
 	Transformer transformer = null;
 	DOMSource source = null;
 	StreamResult result = null ;
-	String xml = System.getProperty("user.dir")+"/../datasource/ds_51_2.xml";
+	String xml = System.getProperty("user.dir") + "/../datasource/ds_51_2.xml";
 	
 	@Override
 	public int query(String resourceID) {
 		createDOM();
 		NodeList items = doc.getElementsByTagNameNS("*","items");
 		Node itemsNode = items.item(0); 
+		
 		if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 		{
 			Element eElement = (Element) itemsNode;
@@ -187,18 +188,18 @@ public class WarehouseImpl implements WarehouseWS {
 					{
 						
 						Element hr = (Element) holdingRequest;
-						Element request = dom.createElement("request");
+						Element request = dom.createElement(hr.getPrefix()+":"+"request");
 						hr.appendChild(request);
 						
-						Element requestID = dom.createElement("requestID");
+						Element requestID = dom.createElement(hr.getPrefix()+":"+"requestID");
 						request.appendChild(requestID);
 						
-						Element item = dom.createElement("item");
+						Element item = dom.createElement(hr.getPrefix()+":"+"item");
 						request.appendChild(item);
 						
-						Element resID = dom.createElement("resourceID");
+						Element resID = dom.createElement(hr.getPrefix()+":"+"resourceID");
 						item.appendChild(resID);
-						Element amt = dom.createElement("amount");
+						Element amt = dom.createElement(hr.getPrefix()+":"+"amount");
 						item.appendChild(amt);
 						
 						requestID.setTextContent(reqID);
@@ -254,7 +255,7 @@ public class WarehouseImpl implements WarehouseWS {
 				int iteration = 0;
 				while(iteration!=length)
 				{
-					Node item = itemList.item(iter);
+					Node item = itemList.item(iteration);
 					if(itemsNode.getNodeType() == Node.ELEMENT_NODE)
 					{
 						Element aElement = (Element) item;
